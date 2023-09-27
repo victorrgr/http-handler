@@ -12,17 +12,14 @@ public class Main {
     public static final int PORT = 8080;
 
     public static void main(String[] args) {
+        var manager = new HttpPathManager();
         try (ServerSocket serverSocket = new ServerSocket(PORT)) {
             logger.info("Listening to port %s".formatted(PORT));
             try (var socket = serverSocket.accept();
                  var is = socket.getInputStream();
                  var os = socket.getOutputStream()) {
 //                logger.info(new String(is.readAllBytes(), StandardCharsets.UTF_8));
-                var request = new HttpRequest(is);
-                String responseContent = "{ \"status\": \"OK\" }";
-                Set<String> headers = new HashSet<>();
-                headers.add("Content-Type: application/json");
-                var response = new HttpResponse(HTTP_VERSION, OK, headers, responseContent);
+                var response = manager.handle(new HttpRequest(is));
                 os.write(response.bundle());
             } catch (Exception e) {
                 throw new RuntimeException(e);

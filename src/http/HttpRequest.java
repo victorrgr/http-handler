@@ -11,6 +11,9 @@ import static http.Constants.logger;
 public class HttpRequest {
     private final InputStream inputStream;
     private String requestLine;
+    private String method;
+    private String path;
+    private String version;
     private String[] headerLines;
     private String requestBody;
     private String fullRequest;
@@ -29,6 +32,10 @@ public class HttpRequest {
                 return; // No request line, exit
             }
             this.requestLine = requestLine;
+            var requestLineParts = this.requestLine.split(" ");
+            this.method = requestLineParts[0];
+            this.path = requestLineParts[1];
+            this.version = requestLineParts[2];
 
             // Read and store the request headers
             StringBuilder headers = new StringBuilder();
@@ -69,5 +76,25 @@ public class HttpRequest {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public String getRequestLine() {
+        return requestLine;
+    }
+
+    public String[] getHeaderLines() {
+        return headerLines;
+    }
+
+    public String getRequestBody() {
+        return requestBody;
+    }
+
+    public String getFullRequest() {
+        return fullRequest;
+    }
+
+    public String getPath() {
+        return path;
     }
 }
